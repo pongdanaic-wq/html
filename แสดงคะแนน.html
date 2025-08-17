@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Competition Scoreboard</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+<h1>ตารางคะแนนการแข่งขัน</h1>
+<table id="scoreTable">
+    <thead>
+        <tr>
+            <th>ทีม</th>
+            <th>คะแนนรวม</th>
+            <th>ภารกิจที่ทำสำเร็จ</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+fetch('data.json')
+    .then(res => res.json())
+    .then(data => {
+        const teams = data.competition.teams;
+        const tbody = document.querySelector('#scoreTable tbody');
+        
+        for (let teamName in teams) {
+            const team = teams[teamName];
+            const missionsList = team.missions.map(m => `${m.name} (+${m.points})`).join('<br>');
+            
+            const row = `
+                <tr>
+                    <td>${teamName.toUpperCase()}</td>
+                    <td>${team.score}</td>
+                    <td>${missionsList || '-'}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        }
+    })
+    .catch(err => console.error('โหลดข้อมูลไม่สำเร็จ:', err));
+</script>
+
+</body>
+</html>

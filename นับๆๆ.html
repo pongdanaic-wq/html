@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแข่งขันหุ่นยนต์</title>
+    <style>
+        /* (The CSS styles remain exactly the same as in the original code) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .timer-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timer-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-status {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .team-section {
+            margin-bottom: 30px;
+        }
+
+        .team-header {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .team-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .team-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .timer-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .robot-display {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .robot-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .missions-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mission-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-btn.start-mission {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            animation: startMissionGlow 2s ease-in-out infinite alternate;
+        }
+
+        .mission-btn.final-mission {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            animation: finalMissionGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes startMissionGlow {
+            from { box-shadow: 0 0 20px rgba(40, 167, 69, 0.3); }
+            to { box-shadow: 0 0 30px rgba(40, 167, 69, 0.6), 0 0 40px rgba(255, 215, 0, 0.4); }
+        }
+
+        @keyframes finalMissionGlow {
+            from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            to { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 40px rgba(40, 167, 69, 0.4); }
+        }
+
+        .mission-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .mission-btn:not(:disabled):hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .mission-btn.start-mission:not(:disabled):hover,
+        .mission-btn.final-mission:not(:disabled):hover {
+            transform: translateX(5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4), 0 0 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .mission-points {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .leaderboard {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .team-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 6px solid #667eea;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .team-card.finished {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+
+        .team-card.rank-1 {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-left-color: #f39c12;
+        }
+
+        .team-card.rank-2 {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            border-left-color: #95a5a6;
+        }
+
+        .team-card.rank-3 {
+            background: linear-gradient(135deg, #cd7f32 0%, #d4a574 100%);
+            border-left-color: #e67e22;
+        }
+
+        .team-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #667eea;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .rank-1 .rank-badge { background: #f39c12; }
+        .rank-2 .rank-badge { background: #95a5a6; }
+        .rank-3 .rank-badge { background: #e67e22; }
+
+        .team-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .team-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            float: right;
+            margin-top: -40px;
+        }
+
+        .team-missions {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .team-time {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .team-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            max-width: 350px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .timer-display {
+                font-size: 3rem;
+            }
+
+            .missions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .team-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .team-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .competition-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .undo-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mission-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .time-display {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        .timer-stopped {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+            color: white !important;
+        }
+
+        /* เพิ่ม style สำหรับ competition status */
+        .competition-status {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .competition-status.ready {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .competition-status.running {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Panel - Competition Control -->
+        <div class="panel">
+            <div class="timer-section">
+                <h2 class="timer-title">การแข่งขันหุ่นยนต์</h2>
+                <div class="timer-display" id="timerDisplay">05:00</div>
+                <div class="timer-status" id="timerStatus">พร้อมเริ่มการแข่งขัน</div>
+
+                <div class="timer-controls">
+                    <button class="btn btn-success" id="startCompetitionBtn" onclick="startCompetition()">
+                        ▶️ เริ่มการแข่งขัน
+                    </button>
+                    <button class="btn btn-warning" onclick="pauseTimer()">
+                        ⏸️ หยุดชั่วคราว
+                    </button>
+                    <button class="btn btn-danger" onclick="stopTimer()">
+                        ⏹️ หยุดการแข่งขัน
+                    </button>
+                    <button class="btn btn-primary" onclick="resetTimer()">
+                        🔄 รีเซ็ต
+                    </button>
+                </div>
+            </div>
+
+            <div class="team-section">
+                <div class="team-header">
+                    🏆 ทีมแข่งขัน
+                </div>
+                <div class="team-controls">
+                    <input type="text" class="team-input" id="teamName" placeholder="ชื่อทีมของคุณ...">
+                    <button class="btn btn-primary" onclick="addTeam()">
+                        ➕ เพิ่มทีม
+                    </button>
+                </div>
+            </div>
+
+            <div class="robot-display">
+                🤖
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalTeams">0</div>
+                    <div class="stat-label">ทีมทั้งหมด</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalMissions">11</div>
+                    <div class="stat-label">ภารกิจทั้งหมด</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="completionRate">0%</div>
+                    <div class="stat-label">เปอร์เซ็นต์สำเร็จ</div>
+                </div>
+            </div>
+
+            <div class="competition-controls">
+                <button class="btn btn-danger" onclick="resetAll()">
+                    🔄 รีเซ็ตทั้งหมด
+                </button>
+                <button class="btn btn-primary" onclick="exportData()">
+                    📊 ส่งออกผล
+                </button>
+                <button class="btn btn-success" onclick="saveResults()" id="saveBtn">
+                    💾 บันทึกผลการแข่งขัน
+                </button>
+                <button class="btn btn-secondary" onclick="viewSavedResults()">
+                    📋 ดูผลที่บันทึก
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Panel - Mission Control -->
+        <div class="panel">
+            <div class="team-header">
+                🎯 การจัดการแข่งขัน
+            </div>
+
+            <!-- แสดงสถานะการแข่งขัน -->
+            <div class="competition-status" id="competitionStatus">
+                เพิ่มทีมและเลือกทีมเพื่อเริ่มการแข่งขัน
+            </div>
+
+            <select class="team-select" id="teamSelect" onchange="updateMissionButtons()">
+                <option value="">เลือกทีมที่กำลังแข่งขัน</option>
+            </select>
+
+            <div class="mission-controls">
+                <button class="btn btn-warning" onclick="undoLastMission()" id="undoBtn" style="display: none;">
+                    ↩️ ยกเลิกภารกิจล่าสุด
+                </button>
+            </div>
+
+            <div class="team-header">
+                🚀 ภารกิจการแข่งขัน
+            </div>
+            <div id="selectedTeamInfo" style="margin-bottom: 20px; color: #666;">
+                กรุณาเลือกทีมก่อน เพื่อเริ่มการแข่งขัน
+            </div>
+
+            <div class="missions-grid" id="missionsGrid">
+                <!-- Mission buttons will be populated here -->
+            </div>
+
+            <div class="team-header">
+                🏆 อันดับคะแนน
+            </div>
+            <div class="leaderboard" id="leaderboard">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🤖</div>
+                    <div>ยังไม่มีทีมในการแข่งขัน</div>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">เพิ่มทีมเพื่อเริ่มแข่งขัน</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div id="resultsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 16px; max-width: 800px; max-height: 80vh; overflow-y: auto; margin: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>📋 ผลการแข่งขันที่บันทึกไว้</h2>
+                <button onclick="closeResultsModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✖️</button>
+            </div>
+            <div id="savedResultsContent">
+                <!-- Saved results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let teams = {};
+        let missions = new Set();
+        let timer = null;
+        let timeLeft = 300; // 5 minutes in seconds
+        let isRunning = false;
+        let isPaused = false;
+        let competitionStarted = false; // เพิ่มตัวแปรนี้
+        let startTime = null;
+        let endTime = null;
+        let savedResults = [];
+        const totalCompetitionDuration = 300;
+
+        // Predefined missions
+        const predefinedMissions = [
+            { name: "ผ่านลูกละนาดแรก", points: 5, isStart: true },
+            { name: "นำกล่องสีแดงวาง และประตูเปิด", points: 10 },
+            { name: "ผ่านรางรถไฟขาไป", points: 10 },
+            { name: "นำกล่องสีน้ำเงินวาง และประตูเปิด", points: 10 },
+            { name: "ผ่านหลุมดำ", points: 5 },
+            { name: "กดปุ่มสวิช เปิดประตูสีส้ม", points: 5 },
+            { name: "ผ่านลูกละนาดที่สอง", points: 5 },
+            { name: "นำกล่องสีเหลืองวางบนเนิน", points: 15 },
+            { name: "ผ่านรางรถไฟขากลับ", points: 10 },
+            { name: "นำกล่องสีเขียววาง", points: 10 },
+            { name: "กลับไปจุดเริ่มต้น", points: 15, isFinal: true }
+        ];
+
+        // Helper function to calculate team duration
+        function getTeamDuration(team) {
+            if (!team.startTime || !team.endTime) {
+                return Infinity;
+            }
+            return Math.floor((new Date(team.endTime) - new Date(team.startTime)) / 1000);
+        }
+
+        // Helper function to sort teams
+        function sortTeams(teams) {
+            return Object.entries(teams).sort((a, b) => {
+                const [nameA, teamA] = a;
+                const [nameB, teamB] = b;
+
+                if (teamA.finished !== teamB.finished) {
+                    return teamB.finished - teamA.finished;
+                }
+
+                if (teamA.score !== teamB.score) {
+                    return teamB.score - teamA.score;
+                }
+
+                if (teamA.finished && teamB.finished) {
+                    const durationA = getTeamDuration(teamA);
+                    const durationB = getTeamDuration(teamB);
+                    return durationA - durationB;
+                }
+
+                if (teamA.completedMissions.size !== teamB.completedMissions.size) {
+                    return teamB.completedMissions.size - teamA.completedMissions.size;
+                }
+
+                return nameA.localeCompare(nameB);
+            });
+        }
+
+        // Database functions
+        function saveToDatabase() {
+            const data = {
+                teams: teams,
+                missions: Array.from(missions),
+                timeLeft: timeLeft,
+                isRunning: isRunning,
+                isPaused: isPaused,
+                competitionStarted: competitionStarted,
+                startTime: startTime,
+                endTime: endTime,
+                savedResults: savedResults,
+                lastUpdated: new Date().toISOString()
+            };
+            console.log('✅ บันทึกข้อมูลสำเร็จ (ในหน่วยความจำ)');
+        }
+
+        function loadFromDatabase() {
+            console.log('⚠️ โหลดข้อมูลจากหน่วยความจำ');
+            return false;
+        }
+
+        // Competition start function
+        function startCompetition() {
+            const selectedTeam = document.getElementById('teamSelect').value;
+            if (!selectedTeam) {
+                showNotification('❌ กรุณาเลือกทีมก่อนเริ่มการแข่งขัน', 'error');
+                return;
+            }
+
+            if (!competitionStarted) {
+                competitionStarted = true;
+                isRunning = true;
+                isPaused = false;
+                startTime = new Date().toISOString();
+                endTime = null;
+                timeLeft = totalCompetitionDuration;
+
+                // เซ็ต startTime สำหรับทีมที่เลือก
+                if (teams[selectedTeam]) {
+                    teams[selectedTeam].startTime = startTime;
+                }
+
+                document.getElementById('timerStatus').textContent = 'กำลังแข่งขัน';
+                document.getElementById('startCompetitionBtn').textContent = '▶️ การแข่งขันเริ่มแล้ว';
+                document.getElementById('startCompetitionBtn').disabled = true;
+                
+                updateCompetitionStatus();
+                updateTimerColors();
+                showNotification(`🚀 เริ่มการแข่งขันแล้ว! ทีม "${selectedTeam}" สามารถเริ่มทำภารกิจได้`);
+
+                // เริ่ม timer
+                if (!timer) {
+                    timer = setInterval(() => {
+                        if (isRunning && !isPaused) {
+                            timeLeft--;
+                            updateTimerDisplay();
+
+                            if (timeLeft <= 0) {
+                                stopTimer();
+                                showNotification('⏰ หมดเวลาการแข่งขัน!', 'warning');
+                            }
+                            saveToDatabase();
+                        }
+                    }, 1000);
+                }
+            }
+
+            updateMissionButtons();
+            saveToDatabase();
+        }
+
+        // Timer functions
+        function startTimer() {
+            // ใช้ startCompetition แทน
+            startCompetition();
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            isRunning = false;
+            isPaused = true;
+            document.getElementById('timerStatus').textContent = 'หยุดชั่วคราว';
+            updateTimerColors();
+            updateCompetitionStatus();
+            showNotification('⏸️ หยุดเวลาชั่วคราว');
+            saveToDatabase();
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            isRunning = false;
+            isPaused = false;
+
+            if (!endTime) {
+                endTime = new Date().toISOString();
+            }
+
+            document.getElementById('timerStatus').textContent = 'จบการแข่งขัน';
+            updateTimerColors();
+            updateCompetitionStatus();
+            saveToDatabase();
+        }
+
+        function autoStopTimer(teamName) {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            isRunning = false;
+            isPaused = false;
+
+            if (!endTime) {
+                endTime = new Date().toISOString();
+            }
+
+            document.getElementById('timerStatus').textContent = `หยุดโดยอัตโนมัติ - ${teamName} เสร็จสิ้น`;
+            updateTimerColors();
+            updateCompetitionStatus();
+            showNotification(`⏱️ หยุดเวลาอัตโนมัติ เนื่องจาก ${teamName} กลับถึงจุดเริ่มต้น!`, 'warning');
+            saveToDatabase();
+        }
+
+        function resetTimer() {
+            stopTimer();
+            timeLeft = totalCompetitionDuration;
+            competitionStarted = false;
+            startTime = null;
+            endTime = null;
+
+            document.getElementById('startCompetitionBtn').disabled = false;
+            document.getElementById('startCompetitionBtn').textContent = '▶️ เริ่มการแข่งขัน';
+
+            updateTimerDisplay();
+            document.getElementById('timerStatus').textContent = 'พร้อมเริ่มการแข่งขัน';
+            updateTimerColors();
+            updateCompetitionStatus();
+            updateMissionButtons();
+            showNotification('🔄 รีเซ็ตเวลาแล้ว');
+            saveToDatabase();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+
+            if (timeLeft <= 60 && isRunning && !isPaused) {
+                document.getElementById('timerDisplay').style.color = '#dc3545';
+            } else {
+                document.getElementById('timerDisplay').style.color = '#2c3e50';
+            }
+        }
+
+        function updateTimerColors() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerStatus = document.getElementById('timerStatus');
+
+            if (!isRunning && !isPaused && endTime) {
+                timerDisplay.classList.add('timer-stopped');
+                timerStatus.style.color = '#dc3545';
+                timerStatus.style.fontWeight = 'bold';
+            } else {
+                timerDisplay.classList.remove('timer-stopped');
+                timerStatus.style.color = '#666';
+                timerStatus.style.fontWeight = 'normal';
+            }
+        }
+
+        // Competition status update
+        function updateCompetitionStatus() {
+            const statusElement = document.getElementById('competitionStatus');
+            const selectedTeam = document.getElementById('teamSelect').value;
+
+            if (!competitionStarted) {
+                if (selectedTeam) {
+                    statusElement.textContent = `พร้อมเริ่มการแข่งขันสำหรับทีม "${selectedTeam}"`;
+                    statusElement.className = 'competition-status ready';
+                } else {
+                    statusElement.textContent = 'เพิ่มทีมและเลือกทีมเพื่อเริ่มการแข่งขัน';
+                    statusElement.className = 'competition-status';
+                }
+            } else if (isRunning && !isPaused) {
+                statusElement.textContent = `กำลังแข่งขัน - ${selectedTeam || 'ไม่ได้เลือกทีม'}`;
+                statusElement.className = 'competition-status running';
+            } else if (isPaused) {
+                statusElement.textContent = 'หยุดชั่วคราว';
+                statusElement.className = 'competition-status';
+            } else {
+                statusElement.textContent = 'การแข่งขันสิ้นสุดแล้ว';
+                statusElement.className = 'competition-status';
+            }
+        }
+
+        // Team functions
+        function addTeam() {
+            const teamName = document.getElementById('teamName').value.trim();
+            if (!teamName) {
+                showNotification('❌ กรุณาใส่ชื่อทีม', 'error');
+                return;
+            }
+
+            if (teams[teamName]) {
+                showNotification('❌ ทีมนี้มีอยู่แล้ว', 'error');
+                return;
+            }
+
+            teams[teamName] = {
+                score: 0,
+                missions: [],
+                completedMissions: new Set(),
+                startTime: null, // จะถูกเซ็ตเมื่อเริ่มการแข่งขัน
+                endTime: null,
+                finished: false
+            };
+
+            document.getElementById('teamName').value = '';
+            updateTeamSelect();
+            updateLeaderboard();
+            updateStats();
+            updateCompetitionStatus();
+            saveToDatabase();
+            showNotification(`✅ เพิ่มทีม "${teamName}" สำเร็จ!`);
+        }
+
+        function updateTeamSelect() {
+            const select = document.getElementById('teamSelect');
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">เลือกทีมที่กำลังแข่งขัน</option>';
+
+            Object.keys(teams).sort().forEach(teamName => {
+                const option = document.createElement('option');
+                option.value = teamName;
+                option.textContent = teamName + (teams[teamName].finished ? ' (เสร็จสิ้น)' : '');
+                select.appendChild(option);
+            });
+
+            if (currentValue && teams[currentValue]) {
+                select.value = currentValue;
+            }
+
+            updateMissionButtons();
+            updateCompetitionStatus();
+        }
+
+        // Mission functions
+        function updateMissionButtons() {
+            const selectedTeamName = document.getElementById('teamSelect').value;
+            const missionsGrid = document.getElementById('missionsGrid');
+            const selectedTeamInfo = document.getElementById('selectedTeamInfo');
+            const undoBtn = document.getElementById('undoBtn');
+
+            if (!selectedTeamName) {
+                missionsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎯</div>
+                        <div>เลือกทีมก่อนเพื่อเริ่มการแข่งขัน</div>
+                    </div>
+                `;
+                selectedTeamInfo.innerHTML = 'กรุณาเลือกทีมก่อน เพื่อเริ่มการแข่งขัน';
+                undoBtn.style.display = 'none';
+                return;
+            }
+
+            const team = teams[selectedTeamName];
+            const statusText = team.finished ? ' (เสร็จสิ้น)' : '';
+            const missionCount = team.completedMissions.size;
+
+            selectedTeamInfo.innerHTML = `
+                ทีม: <strong>${selectedTeamName}${statusText}</strong> |
+                คะแนน: <strong>${team.score}</strong> |
+                ภารกิจสำเร็จ: <strong>${missionCount}/${predefinedMissions.length}</strong>
+                ${team.missions.length > 0 ? '<div class="time-display">เวลาทำภารกิจล่าสุด: ' + new Date(team.missions[team.missions.length - 1].timestamp).toLocaleTimeString('th-TH') + '</div>' : ''}
+            `;
+
+            undoBtn.style.display = (team.missions.length > 0 && !team.finished && competitionStarted) ? 'block' : 'none';
+
+            missionsGrid.innerHTML = predefinedMissions.map((mission, index) => {
+                const isCompleted = team.completedMissions.has(mission.name);
+                const isFinalMission = mission.isFinal;
+                const isStartMission = mission.isStart;
+                const isTeamFinished = team.finished;
+
+                // เงื่อนไขการ disable ปุ่ม
+                let isDisabled = isCompleted || isTeamFinished;
+                
+                // ถ้าเป็นภารกิจเริ่มต้น ให้ทำได้เสมอ (ถ้าการแข่งขันยังไม่เริ่ม)
+                if (isStartMission && !competitionStarted) {
+                    isDisabled = isCompleted || isTeamFinished;
+                } else if (!competitionStarted) {
+                    // ถ้าการแข่งขันยังไม่เริ่ม ปิดภารกิจอื่นๆ
+                    isDisabled = true;
+                } else if (competitionStarted && !isRunning) {
+                    // ถ้าการแข่งขันเริ่มแล้วแต่ถูกหยุด
+                    isDisabled = true;
+                }
+
+                let missionClass = 'mission-btn';
+                if (isStartMission) missionClass += ' start-mission';
+                if (isFinalMission) missionClass += ' final-mission';
+
+                return `
+                    <button
+                        class="${missionClass}"
+                        onclick="completeMission('${mission.name}', ${mission.points})"
+                        ${isDisabled ? 'disabled' : ''}
+                        style="${isDisabled ? 'background: #9ca3af !important; animation: none !important;' : ''}"
+                    >
+                        <span>
+                            ${isCompleted ? '✅' : (isFinalMission ? '🏁' : (isStartMission ? '🚀' : '🎯'))}
+                            ${mission.name}
+                            ${isFinalMission ? ' ⚡ หยุดเวลาอัตโนมัติ' : ''}
+                            ${isStartMission ? ' ⚡ เริ่มนับเวลา' : ''}
+                        </span>
+                        <span class="mission-points">+${mission.points}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function completeMission(missionName, points) {
+            const selectedTeamName = document.getElementById('teamSelect').value;
+            if (!selectedTeamName) return;
+
+            const team = teams[selectedTeamName];
+            if (team.completedMissions.has(missionName) || team.finished) return;
+
+            // ถ้าเป็นภารกิจเริ่มต้นและการแข่งขันยังไม่เริ่ม
+            const mission = predefinedMissions.find(m => m.name === missionName);
+            if (mission && mission.isStart && !competitionStarted) {
+                // เริ่มการแข่งขันอัตโนมัติ
+                competitionStarted = true;
+                isRunning = true;
+                isPaused = false;
+                startTime = new Date().toISOString();
+                endTime = null;
+                timeLeft = totalCompetitionDuration;
+
+                team.startTime = startTime;
+
+                document.getElementById('timerStatus').textContent = 'กำลังแข่งขัน';
+                document.getElementById('startCompetitionBtn').textContent = '▶️ การแข่งขันเริ่มแล้ว';
+                document.getElementById('startCompetitionBtn').disabled = true;
+
+                updateCompetitionStatus();
+                updateTimerColors();
+
+                // เริ่ม timer
+                if (!timer) {
+                    timer = setInterval(() => {
+                        if (isRunning && !isPaused) {
+                            timeLeft--;
+                            updateTimerDisplay();
+
+                            if (timeLeft <= 0) {
+                                stopTimer();
+                                showNotification('⏰ หมดเวลาการแข่งขัน!', 'warning');
+                            }
+                            saveToDatabase();
+                        }
+                    }, 1000);
+                }
+
+                showNotification(`🚀 เริ่มการแข่งขันอัตโนมัติ! ทีม "${selectedTeamName}" ผ่านลูกละนาดแรกแล้ว`);
+            } else if (!competitionStarted || !isRunning) {
+                return; // ไม่สามารถทำภารกิจได้ถ้าการแข่งขันยังไม่เริ่มหรือหยุดอยู่
+            }
+
+            team.score += points;
+            team.missions.push({
+                name: missionName,
+                points: points,
+                timestamp: new Date().toISOString()
+            });
+            team.completedMissions.add(missionName);
+            missions.add(missionName);
+
+            if (mission && mission.isFinal) {
+                team.finished = true;
+                team.endTime = new Date().toISOString();
+                
+                showNotification(`🎉 ${selectedTeamName} เสร็จสิ้นการแข่งขันแล้ว! คะแนนรวม: ${team.score} คะแนน`, 'success');
+
+                const completionTime = getTeamDuration(team);
+                const minutes = Math.floor(completionTime / 60);
+                const seconds = completionTime % 60;
+                showNotification(`⏱️ ใช้เวลา: ${minutes}:${seconds.toString().padStart(2, '0')} นาที`, 'success');
+                
+                autoStopTimer(selectedTeamName);
+            } else {
+                showNotification(`🎉 ${selectedTeamName} ทำภารกิจสำเร็จ: ${missionName} (+${points} คะแนน)`);
+            }
+
+            updateMissionButtons();
+            updateTeamSelect();
+            updateLeaderboard();
+            updateStats();
+            saveToDatabase();
+        }
+
+        function undoLastMission() {
+            const selectedTeamName = document.getElementById('teamSelect').value;
+            if (!selectedTeamName) return;
+
+            const team = teams[selectedTeamName];
+            if (team.missions.length === 0 || team.finished || !competitionStarted || !isRunning) return;
+
+            if (confirm('คุณต้องการยกเลิกภารกิจล่าสุดหรือไม่?')) {
+                const lastMission = team.missions.pop();
+                team.score -= lastMission.points;
+                team.completedMissions.delete(lastMission.name);
+
+                updateMissionButtons();
+                updateLeaderboard();
+                updateStats();
+                saveToDatabase();
+                showNotification(`↩️ ยกเลิกภารกิจ: ${lastMission.name} (-${lastMission.points} คะแนน)`, 'warning');
+            }
+        }
+
+        // Results functions
+        function saveResults() {
+            if (Object.keys(teams).length === 0) {
+                showNotification('❌ ไม่มีข้อมูลทีมให้บันทึก', 'error');
+                return;
+            }
+
+            const sortedTeams = sortTeams(teams);
+            const competitionResult = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                startTime: startTime,
+                endTime: endTime || new Date().toISOString(),
+                duration: startTime ? Math.floor((new Date(endTime || new Date()) - new Date(startTime)) / 1000) : 0,
+                teams: JSON.parse(JSON.stringify(teams)),
+                totalTeams: Object.keys(teams).length,
+                totalMissions: predefinedMissions.length,
+                winner: sortedTeams.length > 0 ? sortedTeams[0][0] : null
+            };
+
+            savedResults.unshift(competitionResult);
+            saveToDatabase();
+            showNotification('💾 บันทึกผลการแข่งขันสำเร็จ!');
+        }
+
+        function viewSavedResults() {
+            const modal = document.getElementById('resultsModal');
+            const content = document.getElementById('savedResultsContent');
+
+            if (savedResults.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div>ยังไม่มีผลการแข่งขันที่บันทึกไว้</div>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = savedResults.map((result, index) => `
+                    <div style="border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; margin-bottom: 20px; background: #f8f9fa;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3>การแข่งขัน #${savedResults.length - index}</h3>
+                            <button onclick="deleteResult(${result.id})" style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">🗑️ ลบ</button>
+                        </div>
+                        <div><strong>วันที่บันทึก:</strong> ${new Date(result.timestamp).toLocaleString('th-TH')}</div>
+                        <div><strong>เริ่มการแข่งขัน:</strong> ${result.startTime ? new Date(result.startTime).toLocaleString('th-TH') : '-'}</div>
+                        <div><strong>สิ้นสุดการแข่งขัน:</strong> ${result.endTime ? new Date(result.endTime).toLocaleString('th-TH') : '-'}</div>
+                        <div><strong>ระยะเวลาการแข่งขัน:</strong> ${Math.floor(result.duration / 60)}:${(result.duration % 60).toString().padStart(2, '0')} นาที</div>
+                        <div><strong>จำนวนทีม:</strong> ${result.totalTeams} ทีม</div>
+                        <div><strong>ทีมชนะ:</strong> ${result.winner ? `ทีม ${result.winner}` : '-'}</div>
+                        <div style="margin-top: 15px;">
+                            <strong>อันดับคะแนน:</strong>
+                            <div style="margin-top: 10px;">
+                                ${sortTeams(result.teams).map((team, idx) => {
+                                    const teamData = team[1];
+                                    const duration = getTeamDuration(teamData);
+                                    const durationStr = duration === Infinity ? '-' : `${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}`;
+                                    const missionCount = teamData.completedMissions ? teamData.completedMissions.length : 0;
+                                    return `
+                                        <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; justify-content: space-between;">
+                                            <span>#${idx + 1} ${team[0]} ${teamData.finished ? '(เสร็จสิ้น)' : ''}</span>
+                                            <span>${teamData.score} คะแนน (${missionCount}/${result.totalMissions} ภารกิจ) | เวลา: ${durationStr}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeResultsModal() {
+            document.getElementById('resultsModal').style.display = 'none';
+        }
+
+        function deleteResult(id) {
+            if (confirm('คุณต้องการลบผลการแข่งขันนี้หรือไม่?')) {
+                savedResults = savedResults.filter(result => result.id !== id);
+                saveToDatabase();
+                viewSavedResults();
+                showNotification('🗑️ ลบผลการแข่งขันแล้ว', 'warning');
+            }
+        }
+
+        // Leaderboard functions
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+
+            if (Object.keys(teams).length === 0) {
+                leaderboard.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🤖</div>
+                        <div>ยังไม่มีทีมในการแข่งขัน</div>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">เพิ่มทีมเพื่อเริ่มแข่งขัน</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const sortedTeams = sortTeams(teams);
+
+            leaderboard.innerHTML = sortedTeams.map(([teamName, teamData], index) => {
+                const rank = index + 1;
+                const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                const finishedClass = teamData.finished ? 'finished' : '';
+                const completionRate = predefinedMissions.length > 0 ? Math.round((teamData.completedMissions.size / predefinedMissions.length) * 100) : 0;
+
+                let timeInfo = '';
+                if (teamData.startTime) {
+                    const startTimeStr = new Date(teamData.startTime).toLocaleTimeString('th-TH');
+                    if (teamData.endTime) {
+                        const endTimeStr = new Date(teamData.endTime).toLocaleTimeString('th-TH');
+                        const duration = getTeamDuration(teamData);
+                        const minutes = Math.floor(duration / 60);
+                        const seconds = duration % 60;
+                        timeInfo = `เริ่ม: ${startTimeStr} | จบ: ${endTimeStr} | ใช้เวลา: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    } else {
+                        timeInfo = `เริ่ม: ${startTimeStr}`;
+                    }
+                }
+
+                return `
+                    <div class="team-card ${rankClass} ${finishedClass}">
+                        ${teamData.finished ? '<div class="team-status">เสร็จสิ้น ✓</div>' : ''}
+                        <div class="rank-badge">${rank}</div>
+                        <div class="team-name">${teamName}</div>
+                        <div class="team-score">${teamData.score}</div>
+                        <div class="team-missions">
+                            ภารกิจสำเร็จ: ${teamData.completedMissions.size}/${predefinedMissions.length} (${completionRate}%)
+                        </div>
+                        ${timeInfo ? `<div class="team-time">${timeInfo}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            const totalTeams = Object.keys(teams).length;
+            const totalCompletedMissions = Object.values(teams).reduce((sum, team) => sum + team.completedMissions.size, 0);
+            const maxPossibleMissions = totalTeams * predefinedMissions.length;
+            const completionRate = maxPossibleMissions > 0 ? Math.round((totalCompletedMissions / maxPossibleMissions) * 100) : 0;
+
+            document.getElementById('totalTeams').textContent = totalTeams;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+
+            if (type === 'error') {
+                notification.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+            } else if (type === 'warning') {
+                notification.style.background = 'linear-gradient(135deg, #ffc107 0%, #e0a800 100%)';
+                notification.style.color = '#212529';
+            }
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        function resetAll() {
+            if (confirm('🚨 คุณต้องการรีเซ็ตการแข่งขันทั้งหมดหรือไม่?\n\nการกระทำนี้จะลบ:\n- ทีมทั้งหมด\n- คะแนนทั้งหมด\n- รีเซ็ตเวลา\n\nไม่สามารถยกเลิกได้!')) {
+                stopTimer();
+                teams = {};
+                missions.clear();
+                timeLeft = totalCompetitionDuration;
+                competitionStarted = false;
+                startTime = null;
+                endTime = null;
+                isRunning = false;
+                isPaused = false;
+
+                document.getElementById('startCompetitionBtn').disabled = false;
+                document.getElementById('startCompetitionBtn').textContent = '▶️ เริ่มการแข่งขัน';
+
+                updateTimerDisplay();
+                updateTimerColors();
+                updateTeamSelect();
+                updateLeaderboard();
+                updateStats();
+                updateCompetitionStatus();
+                saveToDatabase();
+                showNotification('🔄 รีเซ็ตการแข่งขันทั้งหมดสำเร็จ!');
+            }
+        }
+
+        function exportData() {
+            const teamsForExport = {};
+            Object.entries(teams).forEach(([name, team]) => {
+                teamsForExport[name] = {
+                    ...team,
+                    completedMissions: Array.from(team.completedMissions || [])
+                };
+            });
+
+            const data = {
+                competition: {
+                    timestamp: new Date().toISOString(),
+                    startTime: startTime,
+                    endTime: endTime,
+                    duration: startTime ? Math.floor((new Date(endTime || new Date()) - new Date(startTime)) / 1000) : 0,
+                    teams: teamsForExport,
+                    missions: predefinedMissions,
+                    savedResults: savedResults
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], {
+                type: 'application/json'
+            });
+
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `robot-competition-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showNotification('📊 ส่งออกข้อมูลสำเร็จ!');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromDatabase();
+            updateTimerDisplay();
+            updateTimerColors();
+            updateTeamSelect();
+            updateLeaderboard();
+            updateStats();
+            updateMissionButtons();
+            updateCompetitionStatus();
+        });
+
+        window.addEventListener('beforeunload', saveToDatabase);
+
+        document.getElementById('resultsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeResultsModal();
+            }
+        });
+
+        // Add CSS animation for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

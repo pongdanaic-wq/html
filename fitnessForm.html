@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function checkFullName(){
+            let textname = document.getElementById("name")
+            if(textname.value.trim()===""){
+                alert("“กรุณากรอกชื่อ – นามสกุล”")
+                textname.focus();
+            }
+        }
+
+        function checkIdCard(){
+            let textcard = document.getElementById("card")
+            if(textcard.value.length!=13){
+                alert("“เลขบัตรประชาชนต้องมี 13 หลัก”")
+                textcard.value="";
+                textcard.focus();
+            }
+            
+
+        }
+        function checkEmail(){
+            let textemail = document.getElementById("email")
+            if(textemail.value.trim()==""){
+                alert("“กรุณากรอกอีเมล”")
+                textemail.focus();
+            }
+
+        }
+        function checkPhone(){
+            let texttel = document.getElementById("tel")
+            if(texttel.value.length!=10){
+                alert("“เบอร์โทรต้องมี 10 หลัก”")
+                texttel.value="";
+                texttel.focus();
+            }
+
+        }
+        
+    function validateForm(){
+        event.preventDefault();// ป้องกันไม่ให้ submit ถ้ายังไม่ผ่าน
+        let count = 0
+        let textname1 = document.getElementById("name")
+        let textcard1 = document.getElementById("card")
+        let textemail1 = document.getElementById("email")
+        let texttel1 = document.getElementById("tel")
+        let textse = document.getElementById("packgade")
+            if(textname1.value.trim()==""){
+                count+=1;
+            }else if(textcard1.value.length!=13){
+                count+=1;
+            }else if(textemail1.value.trim()==""){
+                count+=1;
+            }else if(texttel1.value.length!=10){
+                count+=1;
+            }if(count>=1){
+                alert("“กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง”")
+            }else{
+                alert("“สมัครสมาชิกสําเร็จ!”")
+                console.log(`ชื่อ        : ${textname1.value}`)
+                console.log(`เลขบัตรปชช : ${textcard1.value}`)
+                console.log(`email     : ${textemail1.value}`)
+                console.log(`เบอร์โทร   : ${texttel1.value}`)
+                console.log(`แพคเกจ   : ${textse.value}`)
+                
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <h1>แบบฟอร์มสมัครสมาชิก</h1>
+    <form>
+        ชื่อ-นามสกุล <br> <input type="text" id="name" onblur="checkFullName()" placeholder="Name" autofocus><br>
+        เลขบัตรประชาชน <br> <input type="text" id="card" onblur="checkIdCard()" placeholder="card"> <br>
+        อีเมล <br> <input type="email" id="email" onblur="checkEmail()"placeholder="email"> <br>
+        โทรศัพท์ <br> <input type="tel" id="tel" onblur="checkPhone()"placeholder="tel"> <br>
+        แพคเกจสมาชิก: <br>
+        <select name="packgade" id="packgade">
+            <option value="">กรุณาเลือก</option>
+            <option value="Basic" >Basic</option >
+            <option value="Premium">Premium</option>
+            <option value="Platinum">Platinum</option> </select>
+            <br><br>
+        <input type="submit" onclick="validateForm(event)">
+    </form>
+
+</body>
+</html>

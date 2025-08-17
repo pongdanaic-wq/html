@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script>
+        function addColor(){
+        let txt = document.getElementById("input_color") //รับค่าจาก input type text
+        let new_color = txt.value //newcoler รับค่าจากinput
+
+        let li_color = document.createElement("li") //สร้างelement li ขึ้นมาใหม่
+        li_color.innerHTML = new_color //นำค่าจาก new color มาใส่ใน แทกli
+
+        let ul = document.getElementById("color_list") 
+        ul.appendChild(li_color) //ยัดลงแทกui li เป็นค่าข้างใน
+        txt.value = ""
+        }
+
+        function show_name(){
+            let txt = document.getElementById("input_name")
+            alert(txt.value)
+            txt.value=""
+        }
+
+        function changeimg(){
+            let img = document.getElementById("imgnong_gam")
+            // if(event.key=="c") {img.src="c:\Users\09256\OneDrive\Pictures\kku.jpg"
+            // }else{
+                // img.src="c:\Users\09256\OneDrive\Pictures\kk.jfif" }
+    }
+    </script>
+
+</head>
+<body onkeydown="changeimg()">
+    <input type="text" id="input_color">
+    <input type="button" id="add_btn" value="เพิ่มสี" onclick="addColor()">
+        <br>
+        <br>
+    <input type="text" id="input_name">
+    <input type="button" id="show_name" value="แสดงชื่อ" onclick="show_name()">
+    <img src="c:\Users\09256\OneDrive\Pictures\kk.jfif" id="imgnong_gam" width="300" height="300">
+    <p>
+    <ul id="color_list">
+    </ul>
+    </p>
+</body>
+</html>

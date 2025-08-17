@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script> 
+        globalThis.faculties = []
+        function addFaculty(){
+            // let txt = document.getElementById("input_txt").val()
+            let txt = $("#input_txt").val()
+            if(txt.trim()!==""){
+                faculties.push(txt)
+                // $("#input_txt").val()="";
+                document.getElementById("input_txt").value="";
+                alert("เพิ่มข้อมูลคณะสำเร็จ")
+                console.log(faculties)
+            }else{
+                alert("กรุณากรอกข้อมูลคณะ")
+            }
+        }
+        function showFaculties(){
+            
+            for (let i=0;i<faculties.length;i++){
+                let radio = $("<input>").attr("type","radio").attr("value",faculties[i]).attr("name","radiofac").appendTo("#faculties1")     
+                //สรา้งตามคิวรี่ และอ้างอิงถึง #fltieacus1 และยัดลงไป ในฟรอม
+                // let label = document.createAttribute("label")
+                let label = $("<label>").text(`${faculties[i]}`).appendTo("#faculties1")
+                //ตรงเลเบิล คือข้อความที่แสดงตามหลังปุ่ม
+                // $("<input>") สร้างแทกหรืออีลิเม้น .attrสร้างattibute
+
+                let br = $("<br>").appendTo("#faculties1")
+                console.log(faculties[i] + i)  //เว้นบันทัด
+            }
+
+            document.getElementById("input_txt").disabled = true
+            document.getElementById("showmore").disabled = true
+            document.getElementById("add").disabled = true
+        }
+    </script>
+</head>
+<body>
+    
+    <h3>แบบฟอร์มเลือกคณะของนักศึกษา</h3>
+    <input type="text" value="" id="input_txt"> <input type="button" value="เพิ่มคณะ" id="add"onclick="addFaculty()">
+    <br>
+    <input type="button" value="แสดงรายการคณะทั้งหมด" id="showmore" onclick="showFaculties()">
+    <br><br>
+    <fieldset>
+        <legend>คณะทั้งหมด</legend>
+            <form id="faculties1">
+                <!-- <input type="radio" value="มข" name="radio123"><label>มข</label><br>
+                <input type="radio" value="มข" name="radio123"><br>
+                <input type="radio" value="มข" name="radio123"><br>
+                <input type="radio" value="มข" name="radio123"><br>-->
+    </fieldset>
+            </form> 
+</body>
+</html>

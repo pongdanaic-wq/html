@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const employees1 = [
+            Name,Department,Salary
+        ]
+        /*let Name = new Array()
+        Name[0] = "John Doe"
+        Name[1] = "Jane Smith"
+        Name[2] = "Mark Johnson"
+        Name[3] = "Emily Davis"
+        Name[4] = "Michael Brown"
+        
+        
+        let Department = []
+        Department[0] = "Sales"
+        Department[1] = "Marketing"
+        Department[2] = "Sales"
+        Department[3] = "HR"
+        Department[4] = "Finance"
+        
+
+        let Salary = []
+        Salary[0] = "50000"
+        Salary[1] = "60000"
+        Salary[2] = "55000"
+        Salary[3] = "45000"
+        Salary[4] = "70000"*/
+        
+        const employees = [
+        { name: "John Doe", department: "Sales", salary: 50000 },
+        { name: "Jane Smith", department: "Marketing", salary: 60000 },
+        { name: "Mark Johnson", department: "Sales", salary: 55000 },
+        { name: "Emily Davis", department: "HR", salary: 45000 },
+        { name: "Michael Brown", department: "Finance", salary: 70000 }
+        ];
+
+        for (let i in employees){
+            if(employees[i].department=="Sales"){
+                console.log(employees[i].name+"works in the Sales department")
+            }
+            else if(employees[i].department=="Marketing"){
+                console.log(employees[i].name+"works in the Marketing department.")
+            }
+            else{
+                console.log(employees[i].name+"works in the another department.")
+            }
+            if(employees[i].salary>=60000){
+                    console.log(employees[i].name+"has a high salary")
+            }
+            else if (employees[i].salary<60000){
+                    console.log(employees[i].name+"has a low salary")
+            }
+            
+
+            
+        };
+        
+        
+
+
+    </script>
+</body>
+</html>

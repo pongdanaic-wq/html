@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>movieForm</title>
+</head>
+<body>
+
+    <fieldset>
+        <legend>lab01</legend><br>
+        <h2>Question :</h2>
+        <h5>“What is the capital city of Spain?”<h5>
+        <h2>Option :</h2>
+        <ol>
+            <li> <a href="https://en.wikipedia.org/wiki/Madrid" target="_blank"> Madrid </a>  </li>
+            <li> <a href="https://en.wikipedia.org/wiki/Moscow" target="_blank"> Moscow </a> </li>
+            <li> <a href="https://en.wikipedia.org/wiki/New_Delhi"  target="_blank"> New_Delhi </a> </li>
+        </ol>
+
+        <h2>Hint:</h2>
+        <img src="c:\Users\09256\Pictures\pp\forest-4674703_1280 - Copy.jpg" width="500" height="350" alt="happypic">
+    
+        <h2> Answer: Madrid  </h2>
+    </fieldset>
+
+
+    <h1>Movie Form</h1>
+    
+    <form name="movieForm" >
+        <fieldset>
+            <legend>เลือกหนังมาไอ้สัด</legend><br>
+            
+            Title: <input type="text" name="namemovie" placeholder="กรุณากรอก" autofocus title="กรอกหัวข้อมา" required>
+            <br><small>Please enter a valid title using alphanumeric characters and spaces only.</small>
+            <br><br>
+
+            <label for="genre">Genre:</label>
+            <select id="genre" name="genre" title="กรอกแนวหนังมา" required>
+                <option value="">Select a genre</option>
+                <option value="action">Action</option>
+                <option value="comedy">Comedy</option>
+                <option value="drama">Drama</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="horror">Horror</option>
+                <option value="sci-fi">Sci-Fi</option>
+            </select>
+
+            <br><br>
+
+            <label for="genre2">Genre2:</label>
+            <select name="genre2" multiple required>
+                <option value="action">Action</option>
+                <option value="comedy">Comedy</option>
+                <option value="drama">Drama</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="horror">Horror</option>
+                <option value="sci-fi">Sci-Fi</option>
+            </select>
+
+            <br><br>
+
+            Release: <input type="date" name="datemovie" required>
+            <br><br>
+
+            Director: <input type="text" name="Director" placeholder="กรอกแน่" required>
+            <br><br>
+
+            Email: <input type="email" name="email" placeholder="กรอกอีเมลแน่" required>
+            <br><br>
+
+            <input type="submit" value="Submit">
+        </fieldset>
+    </form>
+</body>
+</html>
